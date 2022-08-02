@@ -1,2 +1,2 @@
 # AirBnb_clone
-This repository contains the module necessary for the project **AirBnb_clone** carried out during **Software Engineering Program** at **[ALX](https://alx-africa.com)**
+This repository contains the **AirBnb_clone** package carried out as a project during **Software Engineering Program** at **[ALX](https://alx-africa.com)**
