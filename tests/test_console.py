@@ -659,5 +659,3 @@ class, saves it (to the JSON file) and prints the id.\n', f.getvalue())
             HBNBCommand().onecmd(f"Review.show({model_id})")
         self.assertIn('third', f.getvalue())
         self.assertIn('second', f.getvalue())
-Footer
-
