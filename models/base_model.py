@@ -39,7 +39,7 @@ This class defines all common attributes/methds for other classes:
 """
 from datetime import datetime
 import uuid
-from models import storage
+# from models import storage
 
 
 class BaseModel:
@@ -50,41 +50,34 @@ class BaseModel:
     """
 
     def __init__(self, *args, **kwargs):
-        """__init__ class
-
-        Method used to initialize class arguments
-
         """
-        if not kwargs:
+        Method used to initialize class arguments
+        """
+        if kwargs is not None and len(kwargs) != 0:
+            if '__class__' in kwargs:
+                del kwargs['__class__']
+            kwargs['created_at'] = datetime.fromisoformat(kwargs['created_at'])
+            kwargs['updated_at'] = datetime.fromisoformat(kwargs['updated_at'])
+            self.__dict__.update(kwargs)
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
-            self.updated_at = self.created_at
+            self.updated_at = datetime.now()
+            from .__init__ import storage
             storage.new(self)
-        else:
-            f = "%Y-%m-%dT%H:%M:%S.%f"
-            for key, value in kwargs.items():
-                if key == 'created_at' or key == 'updated_at':
-                    value = datetime.strptime(kwargs[key], f)
-            if key != '__class__':
-                setattr(self, key, value)
 
     def __str__(self):
-        """__str__ method
-
-        Method to print object instance of BaseModel class
-
         """
-        class_name = "[" + self.__class__.name__ + "]"
-        dct = {k: v for (k, v) in self.__dict__.items() if (not v) is False}
-        return class_name + " (" + self.id + ") " + str(dct)
+        String representation when instance is printed
+        """
+        return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """save method
-
-        Method to update last updated time
-
         """
-        self.updated_at = datetime.now()
+        Save updates to an instance
+        """
+        self.__dict__.update({'updated_at': datetime.now()})
+        from .__init__ import storage
         storage.save()
 
     def to_dict(self):
@@ -94,16 +87,10 @@ class BaseModel:
         instance
 
         """
-        new_dict = {}
-
-        for key, values in self.__dict__.items():
-            if key == "created_at" or key == "updated_at":
-                new_dict[key] = values.strftime("%Y-%m-%dT%H:%M:%S.%f")
-            else:
-                if not values:
-                    pass
-                else:
-                    new_dict[key] = values
-        new_dict['__class__'] = self.__class__.__name__
+        new_dict = dict(self.__dict__)
+        new_dict.update({'__class__': type(self).__name__,
+                        'updated_at': self.updated_at.isoformat(),
+                         'id': self.id,
+                         'created_at': self.created_at.isoformat()})
 
         return new_dict
