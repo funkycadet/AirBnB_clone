@@ -8,7 +8,7 @@ from models.user import User
 
 
 class TestBaseModel(unittest.TestCase):
-    def tes_attr(self):
+    def test_attr(self):
         user = User()
         self.assertEqual(user.email, '')
         self.assertEqual(user.password, '')
